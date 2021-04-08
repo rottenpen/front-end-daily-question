@@ -77,6 +77,14 @@ export class CustomCodeLensProvider implements vscode.CodeLensProvider {
 				arguments: [document],
 			})
 		);
+
+		codeLens.push(
+			new vscode.CodeLens(range, {
+				title: "👍分享题目",
+				command: "interview.sharePoster",
+				arguments: [content],
+			})
+		);
 		return codeLens;
 	}
 }

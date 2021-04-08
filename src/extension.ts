@@ -11,6 +11,7 @@ import {
 	shouldUpdateNotification,
 	setShouldUpdateNotification,
 } from "./shared/settingUtils";
+import { share } from "./command/share";
 export async function activate(
 	context: vscode.ExtensionContext
 ): Promise<void> {
@@ -55,6 +56,9 @@ export async function activate(
 		});
 		commands.registerCommand("interview.postAnswer", (doc, content) => {
 			postAnswer(doc, content, context);
+		});
+		commands.registerCommand("interview.sharePoster", (content) => {
+			share(content);
 		});
 		commands.registerCommand("zffe.login", () => {
 			login(context);

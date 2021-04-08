@@ -1,16 +1,18 @@
-const tempy = require("tempy");
-const headlessVisit = require("./sharePoster");
-const queryString = require("query-string");
-const execa = require("execa");
+// 引用于 https://github.com/mixn/carbon-now-cli
+import * as vscode from "vscode";
+import * as tempy from "tempy";
+import * as queryString from "query-string";
+import * as execa from "execa";
+import headlessVisit from "./sharePoster";
 // const SAVE_DIRECTORY = tempy.directory();
 const SAVE_DIRECTORY = tempy.directory();
 
 const FULL_DOWNLOADED_PATH = `${SAVE_DIRECTORY}/carbon.png`;
 
-const processContent = (input, START = 0, END = 1000) => {
+const processContent = (input: string, START = 0, END = 1000) => {
 	const NEW_LINE = "\n";
 
-	return new Promise((resolve, reject) => {
+	return new Promise<string>((resolve, reject) => {
 		// Reject immediately when nonsensical input
 		if (START > END) {
 			return reject();
@@ -29,7 +31,7 @@ const processContent = (input, START = 0, END = 1000) => {
 	});
 };
 
-const imgToClipboard = async (imgPath) => {
+const imgToClipboard = async (imgPath: string) => {
 	const OS = process.platform;
 	let SCRIPT;
 
@@ -61,34 +63,29 @@ const imgToClipboard = async (imgPath) => {
 	}
 };
 
-(async () => {
-	const input = `
-export default {
-  GOTO: 'GOTO',
-  VIEWPORT: 'VIEWPORT',
-  WAITFORSELECTOR: 'WAITFORSELECTOR',
-  NAVIGATION: 'NAVIGATION',
-  NAVIGATION_PROMISE: 'NAVIGATION_PROMISE',
-  FRAME_SET: 'FRAME_SET',
-  SCREENSHOT: 'SCREENSHOT'
+export async function share(content: string): Promise<void> {
+	try {
+		vscode.window.showInformationMessage("正在生成图片，请稍等...");
+		const processedContent = await processContent(content);
+		const urlEncodedContent = encodeURIComponent(processedContent);
+		const settings = {
+			code: urlEncodedContent,
+			l: "auto",
+		};
+		let url = "https://carbon.now.sh/";
+		url = `${url}?${queryString.stringify(settings)}`;
+		await headlessVisit({
+			url,
+			location: SAVE_DIRECTORY,
+			type: "png",
+			headless: true,
+		});
+		const downloadedAs = FULL_DOWNLOADED_PATH;
+		await imgToClipboard(downloadedAs);
+		vscode.window.showInformationMessage(
+			"生成成功，图片已生成到您的剪切板，请粘贴分享！"
+		);
+	} catch (error) {
+		console.log("err", error);
+	}
 }
-`;
-	const processedContent = await processContent(input);
-	const urlEncodedContent = encodeURIComponent(processedContent);
-	const settings = {
-		code: urlEncodedContent,
-		l: "auto",
-	};
-	let url = "https://carbon.now.sh/";
-	url = `${url}?${queryString.stringify(settings)}`;
-	await headlessVisit({
-		url,
-		location: SAVE_DIRECTORY,
-		type: "png",
-		headless: true,
-	});
-
-	const downloadedAs = FULL_DOWNLOADED_PATH;
-	console.log(downloadedAs);
-	await imgToClipboard(downloadedAs);
-})();

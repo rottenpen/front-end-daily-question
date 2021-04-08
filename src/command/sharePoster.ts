@@ -1,6 +1,7 @@
+// 引用于 https://github.com/mixn/carbon-now-cli
 const puppeteer = require("puppeteer");
 
-module.exports = async ({
+export default async ({
 	url = "",
 	location = process.cwd(),
 	type = "png",
