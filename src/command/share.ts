@@ -74,12 +74,14 @@ export async function share(content: string): Promise<void> {
 		};
 		let url = "https://carbon.now.sh/";
 		url = `${url}?${queryString.stringify(settings)}`;
+		vscode.window.showInformationMessage("正在生成图片，请稍等...");
 		await headlessVisit({
 			url,
 			location: SAVE_DIRECTORY,
 			type: "png",
 			headless: true,
 		});
+		vscode.window.showInformationMessage("生成成功，请稍等...");
 		const downloadedAs = FULL_DOWNLOADED_PATH;
 		await imgToClipboard(downloadedAs);
 		vscode.window.showInformationMessage(
@@ -87,5 +89,6 @@ export async function share(content: string): Promise<void> {
 		);
 	} catch (error) {
 		console.log("err", error);
+		vscode.window.showInformationMessage("生成失败！");
 	}
 }

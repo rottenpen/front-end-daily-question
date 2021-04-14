@@ -2,7 +2,7 @@
 	"name": "daily-question",
 	"displayName": "每日一题",
 	"description": "A vscode extension for frontEnd Interviewer",
-	"version": "1.1.2",
+	"version": "1.1.5",
 	"publisher": "everest-architecture",
 	"engines": {
 		"vscode": "^1.49.0"
@@ -162,7 +162,7 @@
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
-		"build": "vsce package",
+		"build": "yarn run compile && vsce package",
 		"pretest": "yarn run compile && yarn run lint",
 		"test": "node ./out/test/runTest.js"
 	},
@@ -188,6 +188,7 @@
 	},
 	"dependencies": {
 		"axios": "^0.21.1",
+		"es6-promisify": "^6.1.1",
 		"execa": "^5.0.0",
 		"fs-extra": "^9.0.1",
 		"markdown-it": "^12.0.4",
